@@ -32,6 +32,10 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/database.php';
 // Include the admin settings file.
 if ( is_admin() ) {
 	require_once plugin_dir_path( __FILE__ ) . 'admin/settings.php';
+	// Check for updates.
+	require_once plugin_dir_path( __FILE__ ) . 'updater/class-ncp-updater.php';
+	$updater = new NCP_Updater( __FILE__ );
+	$updater->init();
 }
 
 // Include the public display file.
