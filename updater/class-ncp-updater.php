@@ -14,7 +14,7 @@ declare( strict_types=1 );
 define( 'GH_REQUEST_URI', 'https://api.github.com/repos/%s/%s/releases' );
 define( 'GHPU_USERNAME', 'fgrweb' );
 define( 'GHPU_REPOSITORY', 'ncp' );
-define( 'GHPU_AUTH_TOKEN', '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' );
+define( 'GHPU_AUTH_TOKEN', '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' );
 
 
 /**
