@@ -395,30 +395,6 @@ function fgrweb_hide_admin_bar( $show ) {
 	}
 	return $show;
 }
-add_action( 'template_redirect', 'fgrweb_change_search_url' );
-
-/**
- * Change search url.
- *
- * @return void
- */
-function fgrweb_change_search_url() {
-	if ( is_search() && ! empty( $_GET['s'] ) ) {
-		$args = '?s=' . esc_attr( $_GET['s'] );
-		if ( isset( $_GET['type'] ) && ! empty( $_GET['type'] ) ) {
-			switch ( $_GET['type'] ) {
-				case '155':
-					$args .= '&type=sessions';
-					break;
-				default:
-					break;
-			}
-		}
-		wp_safe_redirect( home_url( '/search/' ) . $args );
-		exit();
-	}
-}
-
 
 add_filter( 'get_search_form', 'custom_search_form' );
 /**
@@ -428,11 +404,20 @@ add_filter( 'get_search_form', 'custom_search_form' );
  * @return string
  */
 function custom_search_form( $form ) {
+	$page_id = get_the_ID();
+	switch ( $page_id ) {
+		case '155':
+			$type = 'sessions';
+			break;
+		default:
+			$type = '';
+			break;
+	}
 	$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
     <div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
-    <input type="text" value="' . get_search_query() . '" name="s" id="s" />
-	<input type="hidden" name="type" value="' . get_the_ID() . '" />
-    <input type="submit" id="searchsubmit" value="' . esc_attr__('Search') . '" />
+    <input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
+	<input type="hidden" name="type" value="' . $type . '" />
+    <input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
     </div>
     </form>';
 	return $form;
