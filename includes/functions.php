@@ -423,4 +423,45 @@ function custom_search_form( $form ) {
 	return $form;
 }
 
+// Oxygen conditions.
+add_action( 'init', 'fgrweb_oxygen_conditions' );
+/**
+ * Oxygen conditions.
+ *
+ * @return void
+ */
+function fgrweb_oxygen_conditions() {
+	if ( function_exists( 'oxygen_vsb_register_condition' ) ) {
+		oxygen_vsb_register_condition(
+			// Condition Name.
+			'Search type parameter',
+			// Values.
+			array(
+				'options' => array(),
+				'custom'  => true,
+			),
+			// Operators.
+			array( '==', '!=' ),
+			// Callback Function.
+			'fgrweb_oxygen_conditions_get_parameter',
+			// Condition Category.
+			'NCP'
+		);
+	}
+}
 
+/**
+ * Get parameter.
+ *
+ * @param  string $value The value.
+ * @param  string $operator The operator to use.
+ * @return boolean
+ */
+function fgrweb_oxygen_conditions_get_parameter( $value, $operator ) {
+	global $OxygenConditions;
+	if ( isset( $_GET[ 'type' ] ) && ! empty( $_GET[ 'type' ] ) && ( $value === $_GET[ 'type' ] ) ) {
+		return ( '==' === $operator ) ? true : false;
+	} else {
+		return ( '!=' === $operator ) ? true : false;
+	}
+}
