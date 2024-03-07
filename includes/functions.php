@@ -465,3 +465,31 @@ function fgrweb_oxygen_conditions_get_parameter( $value, $operator ) {
 		return ( '!=' === $operator ) ? true : false;
 	}
 }
+
+add_action( 'pre_get_posts', 'fgrweb_sessions_query' );
+
+/**
+ * Modify Queries.
+ *
+ * @param  object $query The query object.
+ * @return void
+ */
+function fgrweb_sessions_query( $query ) {
+	if ( ! is_admin() && $query->is_post_type_archive( 'sessions' ) ) {
+		$query->set( 'meta_key', 'date_session' );
+		$query->set(
+			'meta_query',
+			array(
+				'relation' => 'AND',
+				array(
+					'key'     => 'date_session',
+					'value'   => date( 'Ymd' ),
+					'compare' => '<',
+					'type'    => 'DATE',
+				),
+			),
+		);
+		$query->set( 'orderby', 'meta_value' );
+		$query->set( 'order', 'DESC' );
+	}
+}
