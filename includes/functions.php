@@ -493,3 +493,6 @@ function fgrweb_sessions_query( $query ) {
 		$query->set( 'order', 'DESC' );
 	}
 }
+
+// Facet fselect hide count.
+add_filter( 'facetwp_facet_dropdown_show_counts', '__return_false' );
