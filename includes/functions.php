@@ -468,6 +468,51 @@ function fgrweb_oxygen_conditions() {
 			// Condition Category.
 			'NCP'
 		);
+		oxygen_vsb_register_condition(
+			// Condition Name.
+			'Participants in session',
+			// Values.
+			array(
+				'options' => array( 'true', 'false' ),
+				'custom'  => false,
+			),
+			// Operators.
+			array( '==', '!=' ),
+			// Callback Function.
+			'fgrweb_oxygen_conditions_participants_in_session',
+			// Condition Category.
+			'NCP'
+		);
+		oxygen_vsb_register_condition(
+			// Condition Name.
+			'Preparatory documents in session',
+			// Values.
+			array(
+				'options' => array( 'true', 'false' ),
+				'custom'  => false,
+			),
+			// Operators.
+			array( '==', '!=' ),
+			// Callback Function.
+			'fgrweb_oxygen_conditions_preparatory_in_session',
+			// Condition Category.
+			'NCP'
+		);
+		oxygen_vsb_register_condition(
+			// Condition Name.
+			'Meeting Notes in session',
+			// Values.
+			array(
+				'options' => array( 'true', 'false' ),
+				'custom'  => false,
+			),
+			// Operators.
+			array( '==', '!=' ),
+			// Callback Function.
+			'fgrweb_oxygen_conditions_meeting_notes_in_session',
+			// Condition Category.
+			'NCP'
+		);
 	}
 }
 
@@ -481,6 +526,60 @@ function fgrweb_oxygen_conditions() {
 function fgrweb_oxygen_conditions_get_parameter( $value, $operator ) {
 	global $OxygenConditions;
 	if ( isset( $_GET[ 'type' ] ) && ! empty( $_GET[ 'type' ] ) && ( $value === $_GET[ 'type' ] ) ) {
+		return ( '==' === $operator ) ? true : false;
+	} else {
+		return ( '!=' === $operator ) ? true : false;
+	}
+}
+
+/**
+ * Participants in session.
+ *
+ * @param  string $value The value.
+ * @param  string $operator The operator to use.
+ * @return boolean
+ */
+function fgrweb_oxygen_conditions_participants_in_session( $value, $operator ) {
+	global $OxygenConditions;
+	$session_id   = get_the_ID();
+	$participants = get_post_meta( $session_id, 'participants_session', true );
+	if ( ! empty( $participants ) && ( 'true' === $value ) ) {
+		return ( '==' === $operator ) ? true : false;
+	} else {
+		return ( '!=' === $operator ) ? true : false;
+	}
+}
+
+/**
+ * Meeting notes in session.
+ *
+ * @param  mixed $value
+ * @param  mixed $operator
+ * @return void
+ */
+function fgrweb_oxygen_conditions_meeting_notes_in_session( $value, $operator ) {
+	global $OxygenConditions;
+	$session_id = get_the_ID();
+	$documents  = get_post_meta( $session_id, 'notes_session', true );
+	if ( ! empty( $documents ) && ( 'true' === $value ) ) {
+		return ( '==' === $operator ) ? true : false;
+	} else {
+		return ( '!=' === $operator ) ? true : false;
+	}
+}
+
+/**
+ * Preparatory documents in session.
+ *
+ * @param  string $value The value.
+ * @param  string $operator The operator to use.
+ * @return boolean
+ */
+function fgrweb_oxygen_conditions_preparatory_in_session( $value, $operator ) {
+	global $OxygenConditions;
+	$session_id = get_the_ID();
+	$documents  = get_post_meta( $session_id, 'preparatory_session', true );
+	if ( ! empty( $documents ) && ( 'true' === $value ) ) {
 		return ( '==' === $operator ) ? true : false;
 	} else {
 		return ( '!=' === $operator ) ? true : false;
