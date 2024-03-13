@@ -630,3 +630,20 @@ function fgrweb_get_resource_type() {
 	}
 	return '';
 }
+
+/**
+ * Get resource download link.
+ *
+ * @return string
+ */
+function fgrweb_get_resource_download_link() {
+	$origin = get_post_meta( get_the_ID(), 'link_origin_resource', true );
+	if ( 'media' === $origin ) {
+		$attachment     = get_post_meta( get_the_ID(), 'media_file_resource', true );
+		$attachment_url = wp_get_attachment_url( $attachment );
+		return $attachment_url;
+	} else {
+		$link = get_post_meta( get_the_ID(), 'download_resources', true );
+		return $link;
+	}
+}
