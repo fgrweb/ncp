@@ -616,3 +616,17 @@ function fgrweb_sessions_query( $query ) {
 
 // Facet fselect hide count.
 add_filter( 'facetwp_facet_dropdown_show_counts', '__return_false' );
+
+/**
+ * Get resource type.
+ *
+ * @return string
+ */
+function fgrweb_get_resource_type() {
+	$terms = get_the_terms( get_the_ID(), 'document-types' );
+	if ( ! empty( $terms ) ) {
+		$term = array_shift( $terms );
+		return $term->name;
+	}
+	return '';
+}
