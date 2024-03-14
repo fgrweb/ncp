@@ -33,10 +33,10 @@ function fgrweb_ncp_map_session() {
 		$address = $map['address'];
 		// Map city and Country.
 		$city_country = $map['city'] . ', ' . $map['country'];
-		$return_html .= '<div class="ncp-map-session">';
-		$return_html .= '<div class="ncp-map-session__address">' . $address . '</div>';
-		$return_html .= '<div class="ncp-map-session__city-country">' . $city_country . '</div>';
-		$return_html .= '</div>';
+		// $return_html .= '<div class="ncp-map-session">';
+		// $return_html .= '<div class="ncp-map-session__address">' . $address . '</div>';
+		// $return_html .= '<div class="ncp-map-session__city-country">' . $city_country . '</div>';
+		// $return_html .= '</div>';
 		// The map.
 		$return_html .= '<div class="ncp-map-session__map">';
 		$return_html .= '<div class="acf-map" data-zoom="16">
