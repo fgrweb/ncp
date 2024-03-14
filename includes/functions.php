@@ -48,6 +48,27 @@ function fgrweb_ncp_map_session() {
 	return $return_html;
 }
 
+add_shortcode( 'ncp-location-address', 'fgrweb_ncp_location_address' );
+/**
+ * NCP Location Address
+ *
+ * @return string
+ */
+function fgrweb_ncp_location_address() {
+	$return_html = '';
+	// Group.
+	$group = get_field( 'venue_session' );
+	if ( $group ) {
+		// Acf google maps field.
+		$map = $group['direction_session'];
+		// Map address.
+		$address      = $map['street_name'] . ', ' . $map['street_number'] . ', ' . $map['post_code'];
+		$city_country = $map['city'] . ', ' . $map['country'];
+		$return_html .= '<div class="ncp-location-session-header__address">' . $address . '<br/>' . $city_country . '</div>';
+	}
+	return $return_html;
+}
+
 add_shortcode( 'ncp-location-session', 'fgrweb_ncp_location_session' );
 /**
  * NCP Location Session
