@@ -446,14 +446,18 @@ add_filter( 'get_search_form', 'custom_search_form' );
  * @return string
  */
 function custom_search_form( $form ) {
-	$page_id = get_the_ID();
-	switch ( $page_id ) {
-		case '155':
-			$type = 'sessions';
-			break;
-		default:
-			$type = '';
-			break;
+	if ( is_archive( 'resources' ) ) {
+		$type = 'resources';
+	} else {
+		$page_id = get_the_ID();
+		switch ( $page_id ) {
+			case '155':
+				$type = 'sessions';
+				break;
+			default:
+				$type = '';
+				break;
+		}
 	}
 	$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
     <div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
