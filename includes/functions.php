@@ -459,6 +459,13 @@ function custom_search_form( $form ) {
 				break;
 		}
 	}
+	// Search page.
+	if ( is_search() ) {
+		$type = esc_attr( $_GET['type'] );
+		if ( empty( $type ) ) {
+			$type = 'none';
+		}
+	}
 	$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
     <div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
     <input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
