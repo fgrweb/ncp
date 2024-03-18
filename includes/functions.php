@@ -679,3 +679,25 @@ function fgrweb_get_resource_download_link() {
 		return $link;
 	}
 }
+
+add_shortcode( 'ncp-resource-confidential', 'fgrweb_resource_confidential' );
+
+/**
+ * Resource confidential.
+ *
+ * @return string
+ */
+function fgrweb_resource_confidential() {
+	$return_html    = '';
+	$clasifications = wp_get_post_terms( get_the_ID(), 'clasifications' );
+	foreach ( $clasifications as $clasification ) {
+		if ( 'confidential' === $clasification->slug ) {
+			$return_html .= '<div class="ncp-resource-confidential">';
+			$return_html .= '<span class="ncp-resource-confidential__value">' . $clasification->name . '</span>';
+			$return_html .= '</div>';
+		} else {
+			$return_html .= '<div class="ncp-resource-confidential-none"></div>';
+		}
+	}
+	return $return_html;
+}
