@@ -643,6 +643,18 @@ function fgrweb_sessions_query( $query ) {
 		);
 		$query->set( 'orderby', 'meta_value' );
 		$query->set( 'order', 'DESC' );
+	} elseif ( ! is_admin() && $query->is_post_type_archive( 'resources' ) ) {
+		if ( ! is_user_logged_in() ) {
+			$tax_query = array(
+				array(
+					'taxonomy' => 'clasifications',
+					'field'    => 'slug',
+					'terms'    => 'confidential',
+					'operator' => 'NOT IN',
+				),
+			);
+			$query->set( 'tax_query', $tax_query );
+		}
 	}
 }
 
