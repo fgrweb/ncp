@@ -3,7 +3,7 @@
  * Plugin Name: NCP
  * Plugin URI: http://yourwebsite.com/
  * Description: Functionality plugin for Neglected Crisis Platform.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Rewire Design
  * Author URI: http://yourwebsite.com/
  * Text Domain: ncp
