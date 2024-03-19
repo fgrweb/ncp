@@ -150,16 +150,16 @@ function fgrweb_password_lost_form( $attributes, $content = null ) {
 			<?php endif; ?>
 			<p>
 				<?php
-					_e( 'Enter your email address and we will send you a link you can use to pick a new password.', 'ncp' );
+					esc_attr_e( 'Enter your email address and we will send you a link you can use to pick a new password.', 'ncp' );
 				?>
 			</p>
 
-			<form id="lostpasswordform" action="<?php echo wp_lostpassword_url(); ?>" method="post">
+			<form id="lostpasswordform" action="<?php echo wp_lostpassword_url( home_url() ); ?>" method="post">
 				<fieldset>
-					<label for="user_login"><?php _e( 'Email', 'personalize-login' ); ?>
+					<label for="user_login"><?php esc_attr_e( 'Email', 'ncp' ); ?>
 						<input type="text" name="user_login" id="user_login">
 				</fieldset>
-				<input type="submit" name="submit" class="ncp-button-primary" value="<?php _e( 'Reset Password', 'ncp' ); ?>"/>
+				<input type="submit" name="submit" class="ncp-button-primary" value="<?php esc_attr_e( 'Reset Password', 'ncp' ); ?>"/>
 			</form>
 		</div>
 		<?php
@@ -180,10 +180,10 @@ function do_password_lost() {
 			$redirect_url = add_query_arg( 'errors', join( ',', $errors->get_error_codes() ), $redirect_url );
 		} else {
 			// Email sent
-			$redirect_url = home_url( 'member-login' );
+			$redirect_url = home_url( 'sign-in?lost=1' );
 			$redirect_url = add_query_arg( 'checkemail', 'confirm', $redirect_url );
 		}
-		wp_redirect( $redirect_url );
+		wp_safe_redirect( $redirect_url );
 		exit;
 	}
 }
@@ -748,7 +748,7 @@ function fgrweb_custom_login_form() {
 					<input name="rememberme" type="checkbox" id="rememberme" value="forever" />
 					<?php esc_attr_e( 'Remember me', 'ncp' ); ?>
 				</label>
-				<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" title="<?php esc_attr_e( 'Lost Password', 'ncp' ); ?>">
+				<a href="<?php echo esc_url( wp_lostpassword_url(get_permalink()) ); ?>" title="<?php esc_attr_e( 'Lost Password', 'ncp' ); ?>">
 					<?php esc_attr_e( 'Forgot your password?', 'ncp' ); ?>
 				</a>
 			</div>
@@ -794,3 +794,14 @@ function fgrweb_process_login_form() {
 	}
 }
 add_action( 'init', 'fgrweb_process_login_form' );
+
+/**
+ * Change login url.
+ *
+ * @param  mixed $login_url
+ * @return void
+ */
+function ncp_custom_url( $login_url ) {
+	return home_url( 'sign-in' );
+}
+add_filter( 'login_url', 'ncp_custom_url' );
