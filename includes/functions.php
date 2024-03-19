@@ -90,41 +90,6 @@ function fgrweb_ncp_location_session() {
 	return $return_html;
 }
 
-add_shortcode( 'custom_login_form', 'fgrweb_custom_login_form' );
-/**
- * Custom Login Form
- *
- * @return string
- */
-function fgrweb_custom_login_form() {
-	ob_start(); ?>
-	<div class="ncp-loggin-form">
-		<form action="<?php echo esc_url( site_url( 'wp-login.php', 'login_post' ) ); ?>" method="post">
-			<fieldset>
-				<label for="user_login"><?php esc_attr_e( 'Username or email', 'ncp' ); ?></label>
-				<input type="text" name="log" id="user_login" class="input" value="" placeholder="<?php esc_attr_e( 'Type your username or email', 'ncp' ); ?>" size="20"  />
-			</fieldset>
-			<fieldset>
-				<label for="user_pass"><?php _e( 'Password', 'textdomain' ); ?></label>
-				<input type="password" name="pwd" id="user_pass" class="input" value="" placeholder="<?php esc_attr_e( 'Type your password', 'ncp' ); ?>" size="20" />
-			</fieldset>
-			<?php do_action( 'login_form' ); ?>
-			<div class="ncp-loggin-form__remember">
-				<label for="rememberme">
-					<input name="rememberme" type="checkbox" id="rememberme" value="forever" />
-					<?php esc_attr_e( 'Remember me', 'ncp' ); ?>
-				</label>
-				<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" title="<?php _e( 'Lost Password', 'textdomain' ); ?>">
-					<?php esc_attr_e( 'Forgot your password?', 'ncp' ); ?>
-				</a>
-			</div>
-			<input type="submit" class="ncp-button-primary" name="wp-submit" id="wp-submit" value="<?php esc_attr_e( 'Log In', 'textdomain' ); ?>" />
-		</form>
-	</div>
-	<?php
-	return ob_get_clean();
-}
-
 add_action( 'login_head', 'custom_login_css', 99999 );
 
 /**
@@ -467,12 +432,12 @@ function custom_search_form( $form ) {
 		}
 	}
 	$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
-    <div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
-    <input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
+	<div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
+	<input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
 	<input type="hidden" name="type" value="' . $type . '" />
-    <input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
-    </div>
-    </form>';
+	<input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
+	</div>
+	</form>';
 	return $form;
 }
 
@@ -647,10 +612,10 @@ function fgrweb_sessions_query( $query ) {
 		if ( ! is_user_logged_in() ) {
 			$tax_query = array(
 				array(
-					'taxonomy' => 'clasifications',
-					'field'    => 'slug',
-					'terms'    => 'confidential',
-					'operator' => 'NOT IN',
+						'taxonomy' => 'clasifications',
+						'field'    => 'slug',
+						'terms'    => 'confidential',
+						'operator' => 'NOT IN',
 				),
 			);
 			$query->set( 'tax_query', $tax_query );
@@ -675,15 +640,10 @@ function fgrweb_get_resource_type() {
 	return '';
 }
 
-/**
- * Get resource download link.
- *
- * @return string
- */
 function fgrweb_get_resource_download_link() {
 	$origin = get_post_meta( get_the_ID(), 'link_origin_resource', true );
 	if ( 'media' === $origin ) {
-		$attachment     = get_post_meta( get_the_ID(), 'media_file_resource', true );
+		$attachment = get_post_meta( get_the_ID(), 'media_file_resource', true );
 		$attachment_url = wp_get_attachment_url( $attachment );
 		return $attachment_url;
 	} else {
@@ -694,22 +654,143 @@ function fgrweb_get_resource_download_link() {
 
 add_shortcode( 'ncp-resource-confidential', 'fgrweb_resource_confidential' );
 
+
+
+
 /**
- * Resource confidential.
+ * Login form.
+ */
+/**
+ * Start the session for error message handling.
+ *
+ * @return void
+ */
+function fgrweb_start_session() {
+	if ( ! session_id() ) {
+		session_start();
+	}
+}
+add_action( 'init', 'fgrweb_start_session', 1 );
+
+/**
+ * Display custom login errors.
+ *
+ * @return void
+ */
+function fgrweb_show_error_messages() {
+	if ( $codes = fgrweb_get_error_codes() ) {
+		echo '<div class="ncp_login_error_messages">';
+		foreach ( $codes as $code ) {
+			$message = fgrweb_get_error_message( $code );
+			echo '<span class="error"><strong>' . esc_html__( 'Error', 'ncp' ) . '</strong>: ' . esc_html( $message ) . '</span><br/>';
+		}
+		echo '</div>';
+	}
+}
+
+/**
+ * Get error codes from the session.
+ *
+ * @return array
+ */
+function fgrweb_get_error_codes() {
+	return isset( $_SESSION['ncp_login_errors'] ) ? $_SESSION['ncp_login_errors'] : array();
+}
+
+/**
+ * Get the corresponding error message for a code.
+ *
+ * @param  string $error_code The error code.
+ * @return string
+ */
+function fgrweb_get_error_message( $error_code ) {
+	switch ( $error_code ) {
+		case 'empty_username':
+			return __('The username field is empty.', 'ncp' );
+		case 'empty_password':
+			return __(  'The password field is empty.', 'ncp' );
+		case 'invalid_username':
+			return __( 'The username is incorrect.', 'ncp' );
+		case 'incorrect_password':
+			return __( 'The password is incorrect.', 'ncp' );
+		default:
+			return $error_code;//__( 'An error occurred.', 'ncp' );
+	}
+}
+
+/**
+ * Create the custom login form.
  *
  * @return string
  */
-function fgrweb_resource_confidential() {
-	$return_html    = '';
-	$clasifications = wp_get_post_terms( get_the_ID(), 'clasifications' );
-	foreach ( $clasifications as $clasification ) {
-		if ( 'confidential' === $clasification->slug ) {
-			$return_html .= '<div class="ncp-resource-confidential">';
-			$return_html .= '<span class="ncp-resource-confidential__value">' . $clasification->name . '</span>';
-			$return_html .= '</div>';
+function fgrweb_custom_login_form() {
+	if ( is_user_logged_in() ) {
+		return '<p>' . esc_html__( 'You are already logged in.', 'ncp' ) . '</p>';
+	}
+	ob_start();
+	fgrweb_show_error_messages();
+	unset( $_SESSION['ncp_login_errors'] );
+	?>
+	<div class="ncp-loggin-form">
+		<form method="post">
+			<fieldset>
+				<label for="user_login"><?php esc_attr_e( 'Username or email', 'ncp' ); ?></label>
+				<input type="text" name="log" id="user_login" class="input" value="" placeholder="<?php esc_attr_e( 'Type your username or email', 'ncp' ); ?>" size="20"  />
+			</fieldset>
+			<fieldset>
+				<label for="user_pass"><?php esc_attr_e( 'Password', 'ncp' ); ?></label>
+				<input type="password" name="pwd" id="user_pass" class="input" value="" placeholder="<?php esc_attr_e( 'Type your password', 'ncp' ); ?>" size="20" />
+			</fieldset>
+			<input type="hidden" name="ncp_login_nonce" value="<?php echo esc_attr( wp_create_nonce( 'ncp-login-nonce' ) ); ?>"/>
+			<?php do_action( 'login_form' ); ?>
+			<div class="ncp-loggin-form__remember">
+				<label for="rememberme">
+					<input name="rememberme" type="checkbox" id="rememberme" value="forever" />
+					<?php esc_attr_e( 'Remember me', 'ncp' ); ?>
+				</label>
+				<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" title="<?php esc_attr_e( 'Lost Password', 'ncp' ); ?>">
+					<?php esc_attr_e( 'Forgot your password?', 'ncp' ); ?>
+				</a>
+			</div>
+			<input type="submit" class="ncp-button-primary" name="wp-submit" id="wp-submit" value="<?php esc_attr_e( 'Log In', 'ncp' ); ?>" />
+		</form>
+	</div>
+	<?php
+	return ob_get_clean();
+}
+
+// Shortcode to insert the custom login form.
+add_shortcode( 'custom_login_form', 'fgrweb_custom_login_form' );
+
+/**
+ * Process the login form submission.
+ *
+ * @return void
+ */
+function fgrweb_process_login_form() {
+	if ( isset( $_POST['log'] ) && isset( $_POST['pwd'] ) && isset( $_POST['ncp_login_nonce'] ) && wp_verify_nonce( $_POST['ncp_login_nonce'], 'ncp-login-nonce' ) ) {
+		$username = sanitize_text_field( $_POST['log'] );
+		$password = $_POST['pwd'];
+		$remember = isset( $_POST['rememberme'] );
+
+		$credentials = [
+			'user_login'    => $username,
+			'user_password' => $password,
+			'remember'      => $remember,
+		];
+
+		$user = wp_signon( $credentials, false );
+
+		if ( is_wp_error( $user ) ) {
+			$_SESSION['ncp_login_errors'] = $user->get_error_codes();
+			wp_safe_redirect( home_url( 'sign-in' ) );
+			exit;
 		} else {
-			$return_html .= '<div class="ncp-resource-confidential-none"></div>';
+			// Fetch the user's display name to create a profile URL slug.
+			$user_info = get_userdata( $user->ID );
+			wp_safe_redirect( home_url() );
+			exit;
 		}
 	}
-	return $return_html;
 }
+add_action( 'init', 'fgrweb_process_login_form' );
