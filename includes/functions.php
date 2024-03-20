@@ -640,6 +640,11 @@ function fgrweb_get_resource_type() {
 	return '';
 }
 
+/**
+ * Get resource download link.
+ *
+ * @return string
+ */
 function fgrweb_get_resource_download_link() {
 	$origin = get_post_meta( get_the_ID(), 'link_origin_resource', true );
 	if ( 'media' === $origin ) {
@@ -654,6 +659,22 @@ function fgrweb_get_resource_download_link() {
 
 add_shortcode( 'ncp-resource-confidential', 'fgrweb_resource_confidential' );
 
+/**
+ * Resource confidential.
+ *
+ * @return string
+ */
+function fgrweb_resource_confidential() {
+	$terms = get_the_terms( get_the_ID(), 'clasifications' );
+	if ( ! empty( $terms ) ) {
+		$term = array_shift( $terms );
+		if ( 'confidential' === $term->slug ) {
+			return '<div class="ncp-resource-confidential"><span class="ncp-resource-confidential__value">Confidential</span></div>';
+		}
+	}
+	return '';
+
+}
 
 
 
