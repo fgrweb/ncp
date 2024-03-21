@@ -816,13 +816,13 @@ function fgrweb_process_login_form() {
 }
 add_action( 'init', 'fgrweb_process_login_form' );
 
-/**
- * Change login url.
- *
- * @param  mixed $login_url
- * @return void
- */
-function ncp_custom_url( $login_url ) {
-	return home_url( 'sign-in' );
-}
-add_filter( 'login_url', 'ncp_custom_url' );
+// /**
+//  * Change login url.
+//  *
+//  * @param  mixed $login_url
+//  * @return void
+//  */
+// function ncp_custom_url( $login_url ) {
+// 	return home_url( 'sign-in' );
+// }
+// add_filter( 'login_url', 'ncp_custom_url' );
