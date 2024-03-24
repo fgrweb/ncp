@@ -425,19 +425,44 @@ function custom_search_form( $form ) {
 		}
 	}
 	// Search page.
-	if ( is_search() ) {
-		$type = esc_attr( $_GET['type'] );
-		if ( empty( $type ) ) {
+	if ( is_search() || is_page( 192 ) ) { // 192 is the search page.
+		if ( isset( $_GET['type'] ) && ! empty( $_GET['type'] ) ) {
+			$type = esc_attr( $_GET['type'] );
+		} else {
 			$type = 'none';
 		}
+		$form  = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
+			<label for="type" class="ncp-h5 ncp-search-option-label">' . __( 'Select type of search', 'ncp' ) . '</label>
+			<fieldset>';
+		$form .= '<input type="radio" name="type" id="type_session" value="sessions" ';
+		if ( 'sessions' === $type ) {
+			$form .= ' checked="checked" >';
+		} else {
+			$form .= ' >';
+		}
+		$form .= '<span class="npc-search-type__name" id="type_session">' . __( 'Sessions', 'ncp' ) . '</span>';
+		$form .= '<input type="radio" name="type" id="type_resources" value="resources" ';
+		if ( 'resources' === $type ) {
+			$form .= ' checked="checked" >';
+		} else {
+			$form .= ' >';
+		}
+		$form .= '<span class="npc-search-type__name" id="type_resources">' . __( 'Resources', 'ncp' ) . '</span>';
+		$form .= '</fieldset>
+		<div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
+		<input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
+		<input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
+		</div>
+		</form>';
+	} else {
+		$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
+		<div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
+		<input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
+		<input type="hidden" name="type" value="' . $type . '">
+		<input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
+		</div>
+		</form>';
 	}
-	$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
-	<div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
-	<input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
-	<input type="hidden" name="type" value="' . $type . '" />
-	<input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
-	</div>
-	</form>';
 	return $form;
 }
 
