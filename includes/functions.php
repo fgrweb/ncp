@@ -424,6 +424,17 @@ function custom_search_form( $form ) {
 				break;
 		}
 	}
+	// If user is not logged in search only resources.
+	if ( ! is_user_logged_in() ) {
+		$form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
+		<div><label class="screen-reader-text" for="s">' . __( 'Search for:' ) . '</label>
+		<input type="text" value="' . get_search_query() . '" name="s" id="s" placeholder="Search..." />
+		<input type="hidden" name="type" value="resources">
+		<input type="submit" id="searchsubmit" class="ncp-button-primary" value="' . esc_attr__('Search') . '" />
+		</div>
+		</form>';
+		return $form;
+	}
 	// Search page.
 	if ( is_search() || is_page( 192 ) ) { // 192 is the search page.
 		if ( isset( $_GET['type'] ) && ! empty( $_GET['type'] ) ) {
