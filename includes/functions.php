@@ -90,6 +90,24 @@ function fgrweb_ncp_location_session() {
 	return $return_html;
 }
 
+add_shortcode( 'ncp-session-crises-header', 'fgrweb_session_crises_header' );
+
+/**
+ * Crisis for session.
+ *
+ * @return string
+ */
+function fgrweb_session_crises_header() {
+	$return_html  = '';
+	$crisis_terms = get_the_terms( get_the_ID(), 'crisis' );
+	if ( ! empty( $crisis_terms ) ) {
+		foreach ( $crisis_terms as $crisis_term ) {
+			$return_html .= '<div class="ncp-session-crises-header">' . $crisis_term->name . '</div>';
+		}
+	}
+	return $return_html;
+}
+
 add_action( 'login_head', 'custom_login_css', 99999 );
 
 /**
@@ -852,13 +870,27 @@ function fgrweb_process_login_form() {
 }
 add_action( 'init', 'fgrweb_process_login_form' );
 
-// /**
-//  * Change login url.
-//  *
-//  * @param  mixed $login_url
-//  * @return void
-//  */
-// function ncp_custom_url( $login_url ) {
-// 	return home_url( 'sign-in' );
-// }
-// add_filter( 'login_url', 'ncp_custom_url' );
+add_shortcode( 'ncp-archive-title', 'fgrweb_archive_title' );
+
+/**
+ * Archive title.
+ *
+ * @return string
+ */
+function fgrweb_archive_title() {
+	ob_start();
+	$return_html = '';
+	if ( is_post_type_archive( 'resources' ) ) {
+		$return_html .= '<h1 class="ncp-archive-title">Resources</h1>';
+	}
+	if ( is_tax( 'crises' ) ) {
+		$return_html .= '<h1 class="ncp-archive-title">Crises</h1>';
+		$return_html .= '<h2 class="ncp-archive-title">' . single_term_title( '', false ) . '</h2>';
+	}
+	if ( is_tax( 'themes' ) ) {
+		$return_html .= '<h1 class="ncp-archive-title">Theme</h1>';
+		$return_html .= '<h2 class="ncp-archive-title">' . single_term_title( '', false ) . '</h2>';
+	}
+	ob_get_clean();
+	return $return_html;
+}
