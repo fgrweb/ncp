@@ -303,7 +303,10 @@ add_shortcode( 'ncp-register-form', 'fgrweb_register_form' );
 function fgrweb_register_form() {
 	ob_start();
 	$return_html = '';
-	if ( isset( $_GET['request'] ) && ! empty( $_GET['request'] ) ) {
+	if ( is_user_logged_in() ) {
+		$return_html .= '<p>' . esc_html__( 'You are already logged in.', 'ncp' ) . '</p>';
+		$return_html .= '<a href="' . home_url( '/profile' ) . '">' . esc_html__( 'Edit profile', 'ncp' ) . '</a>';
+	} elseif ( isset( $_GET['request'] ) && ! empty( $_GET['request'] ) ) {
 		$request = fgrweb_decrypt_string( $_GET['request'] );
 		global $wpdb;
 		$prefix    = $wpdb->prefix;
